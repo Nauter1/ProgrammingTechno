@@ -1,0 +1,10 @@
+const aa = 1;
+const bb = 2;
+console.log(aa+bb);
+console.log(bb-aa);
+console.log(aa*bb);
+console.log(bb/aa);
+console.log(aa%bb);
+console.log(Math.floor(bb/aa));
+console.log(Math.sqrt(bb));
+console.log(Math.pow(aa,bb));
