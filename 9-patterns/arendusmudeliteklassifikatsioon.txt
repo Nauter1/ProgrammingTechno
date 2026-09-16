@@ -1,0 +1,11 @@
+Loovmustrid                     Struktuurilised mustrid   Käitumuslikud mustrid
+
+- Factory                       - Adapter                 - Chain of Responsibility
+- Builder                       - Bridge                  - Command
+- Prototype                     - Composite               - Iterator
+- Singleton                     - Decorator               - Memento
+                                - Facade                  - Observer
+                                - Flyweight               - State  
+                                                          - Strateegia
+                                                          - Template
+                                                          - Visitor
