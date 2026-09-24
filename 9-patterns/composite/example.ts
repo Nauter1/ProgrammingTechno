@@ -56,7 +56,7 @@ class Komposiit extends Komponent{
     public tegevus(): string{
         const results = [];
         for (const alamelement of this.alamelemendid){
-            results.push(alamelement.tegevus())
+           // results.push(alamelement.tegevus()) EI TEA MIKS EI TÖÖTA AAAAAAA
         }
         return `Branch (${results.join('+')})`
     }
