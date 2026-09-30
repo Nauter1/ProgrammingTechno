@@ -1,4 +1,9 @@
+/*
 
+Chain of Responsibility on muster mis lubab kliendil requesti anda handlerile ja sättida "chain". Handler võib tegeleda requestiga kui on võimeline, või annab järgmise handlerile. See on kasutatav et erinevaid tulemusi saada
+Või et oleks mingi süsteem et tegeleda vigase andmega.
+
+*/
  //Interface Deklareerib meetodi et "chain" ehitada
  //Deklareerib meetodi et requesti tegelt teha
 
