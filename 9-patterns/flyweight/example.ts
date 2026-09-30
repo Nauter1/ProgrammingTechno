@@ -1,72 +1,97 @@
-// Flyweighti klassis sisaldab osa puu seisundist. need väljad hoiavad väärtusi
-// Mis on unikaalsed iga üksiku puu jaoks. Näiteks ei leia siit puu kordinaate, aga
-// Puu pinnavorm (texture) ja värv, mida jagatakse mitme puu vahel hoitakse tavaliselt siin klassis. kuna see andmemaht on tavaliselt üsna suur oleks raiskamine hoida
-// iga puu juures seda pinnavormi ja värvi individuaalselt eraldi. selle asemel me saame
-// kõik korduvad andmed eraldada ühte jagatud klassi, kus hoitakse neid andmeid
-// ühekordselt mida kõik teised puu-objektid saavad viidata. See hoiab kokku mälumahtu.
-
-class PuuLiik{
+//Flyweighti klassis sisaldab osa puu seisundist. Need väljad hoiavad väärtusi 
+// mis on unikaalsed iga üksiku puu jaoks. Näiteks ei leia siit puu kordinaate, aga
+//puu pinnavorm (texture) ja värv, mida jagatakse mitme puu vahel hoitakse tavaliselt 
+// siin klassis. Kuna see andmemaht on tavaliselt üsna suur oleks raiskamine hoida 
+//iga puu juures seda pinnavormi ja värvi individuaalselt eraldi. Selle asemel me saame
+//kõik korduvad andmed eraldada ühte jagatud klassi, kus hoitakse neid andmeid 
+// ühekordselt mida kõik teised puu-objektid saavad viidata. See hoiab kokku mälumahtu
+class PuuLiik {
     nimi: string;
     värv: string;
-    pinnavorm: ImageBitmap;
+    pinnavorm: string;
 
-    constructor(nimi: string, värv: string, pinnavorm: ImageBitmap){
-        this.nimi = nimi
-        this.värv = värv
-        this.pinnavorm = pinnavorm
+    constructor(nimi: string, värv: string, pinnavorm: string) {
+        this.nimi = nimi,
+        this.värv = värv,
+        this.pinnavorm = pinnavorm;
     }
-    public joonistaPuu(x: number, y: number, canvas: any){}
-    public draw(x: number, y: number, canvas: HTMLCanvasElement): void{
+    public draw(x: number, y:number, canvas: HTMLCanvasElement): void 
+    {
         const ctx = canvas.getContext("2d");
-        if (ctx === null){
+        if (ctx === null) {
             return;
         }
-        ctx.fillStyle = this.color;
-        ctx.fillRect(x-3,y,6,20)// tüvi
+        ctx.fillStyle = this.värv;
+
+        ctx.fillRect(x-3,y,6,20) //tüvi
+
         ctx.beginPath();
-        ctx.arc(x,y-10,15,0,Math.PI*2);
+        ctx.arc(x,y-10,15,0, Math.PI * 2);
         ctx.fill();
+
         console.log(`joonistan ${this.nimi} puud`)
+
     }
 }
-// Flyweighti tehas otsustab kas taaskasutada olemasolevat flyweighti või
+// Flyweighti tehas otsustab kas taaskasutada olemasolevat flyweighti või 
 // teha uus objekt, näiteks kui on kaks eri liiki puud ja nende pinnavorm erineb.
-class PuuVabrik{
+class PuuVabrik {
     static puuLiigid: PuuLiik[] = [];
 
-    public static puuTüüp(nimi: string, värv: string, pinnavorm: ImageBitmap){
-        let tüüp = PuuVabrik.puuLiigid.find(p => p.nimi == nimi && p.värv == värv && p.pinnavorm == pinnavorm)
-
-        if (tüüp == null){
+    public static puuTüüp(nimi: string, värv: string, pinnavorm: string): PuuLiik {
+        let tüüp = PuuVabrik.puuLiigid.find
+        (p => p.nimi == nimi && p.värv == värv && p.pinnavorm == pinnavorm)
+        if (tüüp == null) {
             tüüp = new PuuLiik(nimi, värv, pinnavorm)
             PuuVabrik.puuLiigid.push(tüüp)
         }
         return tüüp
-    }
+    }    
 }
+//Objekt ise hoiab oma kontekstis ainult talle unikaalset puu oleku muutujaid. 
+// Programmis võib olla neid miljardeid kuna nad on väikese mäluruumi tarbega
+// antud juhul ainult üks viiteväli ja koordinaadid
 
-// Objekt ise hoiab oma kontekstis ainult talle unikaalset puu oleku muutujaid.
-// Programmis võib olla neid miljardeid
-
-class Puu{
+class Puu {
     x: number;
     y: number;
     tüüp: PuuLiik;
-    constructor(x: number, y: number, tüüp: PuuLiik){
+
+    constructor(x: number, y: number, tüüp: PuuLiik) {
         this.x = x
         this.y = y
         this.tüüp = tüüp;
     }
-    draw(canvas: HTMLCanvasElement): void{
-        this.x = x
-        this.y = y
-        this.tüüp 
+    draw(canvas: HTMLCanvasElement): void {
+        this.tüüp.draw(this.x, this.y, canvas)
     }
 }
 
-class Mets{
+// Puu ja Mets-a klassid on flyweightide kliendid, neid saab kokku liita, kui 
+// puu klassi enam edasi ei arendata
+
+class Mets {
     puudMetsas: Puu[] = []
-    public istutaPuu(x: number, y: number, nimi: string, värv: string, pinnavorm: ImageBitmap): void{
-        let tüüp: PuuLiik = PuuVabrik.puuTüüp(nimi, värv, pinnavorm);
+        
+    public istutaPuu(x: number, y: number, nimi: string, värv: string, pinnavorm: string): void 
+    {
+        let tüüp: PuuLiik = PuuVabrik.puuTüüp(nimi,värv,pinnavorm)
+        let puu = new Puu(x,y,tüüp)
+        this.puudMetsas.push(puu)
     }
+    public drawCanvas(canvas: HTMLCanvasElement): void {
+        this.puudMetsas.forEach(tree => {tree.draw(canvas)})
+    }
+    
+
 }
+
+const canvas = document.getElementById("Canvas") as HTMLCanvasElement
+const mets = new Mets();
+
+mets.istutaPuu(50,100,"tamm","green", "tamm.png")
+mets.istutaPuu(10,120,"tamm","green", "tamm.png")
+mets.istutaPuu(200,100,"Kirss","pink", "sakura.png")
+mets.istutaPuu(30,120,"Mänd","green", "tamm.png")
+
+mets.drawCanvas(canvas)
